@@ -1,6 +1,9 @@
 export type Filters = {
   country: string;
   genre: string;
+  style: string;
+  format: string;
+  label: string;
   decade: string;
   year: string;
 };
@@ -31,6 +34,7 @@ export type ReleaseDetail = {
   styles?: string[];
   images?: { uri: string; uri150?: string; type?: string }[];
   tracklist?: { position: string; title: string; duration?: string }[];
+  videos?: { uri: string; title?: string; duration?: number; description?: string }[];
   uri: string;
   notes?: string;
 };

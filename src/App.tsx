@@ -12,10 +12,38 @@ import {
   removeHistory,
 } from "./history";
 import type { Filters, HistoryEntry } from "./types";
+import { COUNTRIES, DECADES, FORMATS, GENRES, STYLES } from "./constants";
 
 type View = "roll" | "history";
 
-const EMPTY_FILTERS: Filters = { country: "", genre: "", decade: "", year: "" };
+const EMPTY_FILTERS: Filters = {
+  country: "",
+  genre: "",
+  style: "",
+  format: "",
+  label: "",
+  decade: "",
+  year: "",
+};
+
+function pick<T>(arr: readonly T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomFilters(): Filters {
+  // Pick a loose, mostly-sparse set so results stay plentiful.
+  // Always set a decade so results feel grounded in a time.
+  const maybe = (p: number) => Math.random() < p;
+  return {
+    country: maybe(0.35) ? pick(COUNTRIES) : "",
+    genre: maybe(0.7) ? pick(GENRES) : "",
+    style: maybe(0.25) ? pick(STYLES) : "",
+    format: maybe(0.35) ? pick(FORMATS) : "",
+    label: "",
+    decade: maybe(0.6) ? pick(DECADES) : "",
+    year: "",
+  };
+}
 
 function downloadText(filename: string, text: string) {
   const blob = new Blob([text], { type: "application/json" });
@@ -35,12 +63,12 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleRoll = async () => {
+  const rollWith = async (f: Filters) => {
     setLoading(true);
     setError(null);
     try {
-      const release = await pickRandomRelease(filters);
-      const entry = appendHistory(filters, release);
+      const release = await pickRandomRelease(f);
+      const entry = appendHistory(f, release);
       setCurrent(entry);
       setHistory(loadHistory());
     } catch (e) {
@@ -49,6 +77,14 @@ export default function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRoll = () => rollWith(filters);
+
+  const handleLucky = () => {
+    const f = randomFilters();
+    setFilters(f);
+    rollWith(f);
   };
 
   const handleRemove = (id: string) => {
@@ -86,6 +122,7 @@ export default function App() {
             filters={filters}
             onChange={setFilters}
             onRoll={handleRoll}
+            onLucky={handleLucky}
             loading={loading}
           />
           {error && <div className="error">{error}</div>}

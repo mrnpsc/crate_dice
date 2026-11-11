@@ -125,6 +125,26 @@ select {
 .filters .roll:hover:not(:disabled) {
   background: var(--accent-hover);
 }
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: stretch;
+  grid-column: 1 / -1;
+}
+.filter-actions .roll {
+  flex: 1 1 140px;
+}
+.filter-actions .lucky {
+  flex: 1 1 160px;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.filter-actions .lucky:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
 .hint,
 .history.empty {
